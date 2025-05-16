@@ -36,6 +36,8 @@ __all__ = (
     "Movement",
     "Rotation",
     "AbilityUse",
+    "CaptureZone",
+    "GoTo",
     "Pass",
 )
 
