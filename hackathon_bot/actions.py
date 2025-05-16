@@ -175,10 +175,73 @@ class GoTo(ResponseAction):
         go_to = GoTo(5, 10, custom_costs, custom_penalties)
     """
 
+    @dataclass(slots=True)
+    class Costs:
+        """Represents the costs of moving.
+
+        Attributes
+        ----------
+        forward: :class:`float`
+            The cost of moving forward. Defaults to 1.
+        backward: :class:`float`
+            The cost of moving backward. Defaults to 1.5.
+        rotate: :class:`float`
+            The cost of rotating. Defaults to 1.5.
+        """
+
+        forward: float = 1
+        backward: float = 1.5
+        rotate: float = 1.5
+
+    @dataclass(slots=True)
+    class Penalties:
+        """Represents the penalties of moving.
+
+        Attributes
+        ----------
+        blindly: :class:`float`
+            The penalty for blindly moving. Defaults to None.
+        tank: :class:`float`
+            The penalty for moving into a tank. Defaults to None.
+        bullet: :class:`float`
+            The penalty for moving into a bullet. Defaults to None.
+        mine: :class:`float`
+            The penalty for moving into a mine. Defaults to None.
+        laser: :class:`float`
+            The penalty for moving into a laser. Defaults to None.
+        per_tile: :class:`list[PerTile]`
+            A list of penalties for specific tiles. Defaults to an empty list.
+        """
+
+        @dataclass(slots=True)
+        class PerTile:
+            """Represents a penalty for a specific tile.
+
+            Attributes
+            ----------
+            x: :class:`int`
+                The x coordinate of the tile.
+            y: :class:`int`
+                The y coordinate of the tile.
+            penalty: :class:`float`
+                The penalty for the tile.
+            """
+
+            x: int
+            y: int
+            penalty: float
+
+        blindly: float | None = None
+        tank: float | None = None
+        bullet: float | None = None
+        mine: float | None = None
+        laser: float | None = None
+        per_tile: list[PerTile] = field(default_factory=list)
+
     x: int
     y: int
-    costs: GoToPayload.Costs = field(default_factory=GoToPayload.Costs)
-    penalties: GoToPayload.Penalties = field(default_factory=GoToPayload.Penalties)
+    costs: Costs = field(default_factory=Costs)
+    penalties: Penalties = field(default_factory=Penalties)
     packet_type: ClassVar[PacketType] = PacketType.GO_TO
 
     @final

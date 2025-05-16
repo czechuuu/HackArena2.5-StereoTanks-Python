@@ -96,6 +96,19 @@ class ExampleBot(StereoTanksBot):
                     random.randint(0, self.grid_dimension - 1),
                     random.randint(0, self.grid_dimension - 1),
                 ),
+                GoTo(
+                    random.randint(0, self.grid_dimension - 1),
+                    random.randint(0, self.grid_dimension - 1),
+                    costs=GoTo.Costs(forward=10, backward=1, rotate=1),
+                    penalties=GoTo.Penalties(
+                        mine=-5,
+                        laser=1,
+                        blindly=-1,
+                        per_tile=[
+                            GoTo.Penalties.PerTile(x=5, y=5, penalty=100),
+                        ],
+                    ),
+                ),
                 Pass(),
             ]
         )

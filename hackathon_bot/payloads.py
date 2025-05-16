@@ -8,9 +8,12 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import humps
+
+if TYPE_CHECKING:
+    from .actions import GoTo
 
 # pylint: disable=too-many-instance-attributes
 
@@ -332,32 +335,10 @@ class CaptureZonePayload(ResponseActionPayload):
 class GoToPayload(ResponseActionPayload):
     """Represents a GO_TO payload."""
 
-    @dataclass(slots=True)
-    class Costs:
-        forward: float = 1
-        backward: float = 1.5
-        rotate: float = 1.5
-
-    @dataclass(slots=True)
-    class Penalties:
-
-        @dataclass(slots=True)
-        class PerTile:
-            x: int
-            y: int
-            penalty: float
-
-        blindly: float | None = None
-        tank: float | None = None
-        bullet: float | None = None
-        mine: float | None = None
-        laser: float | None = None
-        per_tile: list[PerTile] = field(default_factory=list)
-
     x: int
     y: int
-    costs: Costs
-    penalties: Penalties
+    costs: GoTo.Costs
+    penalties: GoTo.Penalties
 
 
 @dataclass(slots=True, frozen=True)

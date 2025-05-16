@@ -1,6 +1,6 @@
-# MonoTanks API wrapper in Python for HackArena 2.5
+# StereoTanks API wrapper in Python for HackArena 2.5
 
-This API wrapper for MonoTanks game for the HackArena 2.5, organized by
+This API wrapper for StereoTanks game for the HackArena 2.5, organized by
 KN init. It is implemented as a WebSocket client written in Python programming
 language and can be used to create bots for the game.
 
