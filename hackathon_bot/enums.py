@@ -35,6 +35,8 @@ __all__ = (
     "Ability",
     "PacketType",
     "WarningType",
+    "WallType",
+    "BulletType",
 )
 
 

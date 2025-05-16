@@ -8,8 +8,6 @@ import os
 import random
 
 from hackathon_bot import *
-from hackathon_bot.actions import CaptureZone, GoTo
-from hackathon_bot.enums import BulletType, WallType
 
 
 class ExampleBot(StereoTanksBot):
