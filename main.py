@@ -30,15 +30,18 @@ class MyBot(StereoTanksBot):
         if attack_action is not None:
             return attack_action
         
-        # Check if you can activate the radar
-        activate_radar: AbilityUse | None = self.soldiers[my_type].activate_radar(game_state, self.strategy)
-        if activate_radar is not None:
-            return activate_radar
+        # RADAR NOT UTILIZED
+        # # Check if you can activate the radar
+        # activate_radar: AbilityUse | None = self.soldiers[my_type].activate_radar(game_state, self.strategy)
+        # if activate_radar is not None:
+        #     return activate_radar
         
         # Continue with the current strategy
         match self.strategy.get_objective(my_type):
             case Objective.GO_TO_ZONE:
                 return self.soldiers[my_type].go_to_zone(game_state, self.strategy)
+            case Objective.DEFEND_AREA:
+                return self.soldiers[my_type].defend_area(game_state, self.strategy)
             case default:
                 return Pass()
     
