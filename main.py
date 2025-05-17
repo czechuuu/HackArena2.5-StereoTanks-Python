@@ -175,9 +175,9 @@ class MyBot(StereoTanksBot):
         if zone_height != zone_width:
             raise ValueError(f"Zone is not square: {zone_height} != {zone_width}")
         
-        x_square: int = max(x_zone - 4, 0)
-        y_square: int = max(y_zone - 4, 0)
-        square_length: int = zone_height + 4
+        x_square: int = max(x_zone - 2, 0)
+        y_square: int = max(y_zone - 2, 0)
+        square_length: int = zone_height + 2
         if x_square + square_length >= 20 or y_square + square_length >= 20:  # OK?
             square_length = min(20 - x_square - 1, 20 - y_square - 1)
         return tuple([x_square, y_square, square_length])
