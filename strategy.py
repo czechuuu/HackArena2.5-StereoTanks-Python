@@ -6,7 +6,7 @@ class Objective(Enum):
     DEFEND_AREA = 1
 class Strategy:
     objective: dict[TankType: Objective]
-    defend_area_coords: dict[TankType: tuple[int, int, int]] = {}
+    defend_area_coords: dict[TankType: tuple[int, int, int]] = {}   # (x, y, radius)
 
     # CURRENTLY DEFAULT GO TO ZONE
     def __init__(self) -> None:
