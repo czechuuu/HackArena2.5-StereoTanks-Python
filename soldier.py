@@ -1,8 +1,7 @@
 from typing import Tuple
 from hackathon_bot import *
 from strategy import Strategy
-class Soldier():
-
+class Soldier:
     def _find_my_coordinates(self, game_state: GameState) -> tuple[int, int] | None:
         for y_coord, row in enumerate(game_state.map.tiles):
             for x_coord, tile in enumerate(row):
@@ -79,17 +78,15 @@ class Soldier():
 
         # If all tiles are occupied, just go to the corner of the zone
         return GoTo(zone.x, zone.y, penalties=strategy.get_penalties())
-
-        return Pass()
     
     def shoot_if_should(self, game_state: GameState, strategy: Strategy) -> ResponseAction:
-        pass  # Both soldiers implement this method
+        return None  # Both soldiers implement this method
 
     def activate_radar(self, game_state: GameState, strategy: Strategy) -> ResponseAction | None:
         return None  # Light soldier overrides this method; Default behaviour for heavy soldier
     
 
-    def should_shoot_opponent(self, game_state: GameState):
+    def should_shoot_opponent(self, game_state: GameState, strategy: Strategy) -> bool:
         map: Map = game_state.map
         my_tank: Tank = self._find_my_tank(game_state)
         teammate_tank: Tank = self._find_teammate_tank(game_state)
@@ -126,7 +123,7 @@ class Soldier():
             for entity in tile.entities:
                 if isinstance(entity, Wall) and entity.type == WallType.SOLID:
                     return False
-                if isinstance(entity, Tank) and entity.owner_id == teammate_tank.owner_id:
+                if isinstance(entity, Tank) and teammate_tank is not None and entity.owner_id == teammate_tank.owner_id:
                     return False
             
             # Check if there's an enemy tank in this tile

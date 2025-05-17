@@ -5,8 +5,8 @@ from heavy_soldier import HeavySoldier
 from strategy import Strategy, Objective
 
 class MyBot(StereoTanksBot):
-    soldiers: dict[TankType: Soldier]
-    strategy: Strategy
+    soldiers: dict[TankType: Soldier] = {}
+    strategy: Strategy = None
 
     def __init__(self) -> None:
         super().__init__()
@@ -20,7 +20,7 @@ class MyBot(StereoTanksBot):
     
     def next_move(self, game_state: GameState) -> ResponseAction: 
         # Find my tank on the map
-        my_type: TankType = self._find_my_tank(game_state).type
+        my_type: TankType = self._find_my_tank(game_state).type  # CHECK IF NONE
         
         # Check if it can shoot an opponent
         attack_action: AbilityUse | None = self.soldiers[my_type].shoot_if_should(game_state, self.strategy)
