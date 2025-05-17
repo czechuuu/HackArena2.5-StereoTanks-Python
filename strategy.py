@@ -6,13 +6,13 @@ class Objective(Enum):
     DEFEND_AREA = 1
 class Strategy:
     objective: Objective = None
-    # x, y, side_length
-    defend_area_coords: list[int] = None  # coordinates, length
+    defend_area_coords: tuple[int, int, int] = None  # coordinates, length
+    apache_timeout: int = None  # time for apache to stay on target
 
-    # CURRENTLY DEFAULT GO TO ZONE
     def __init__(self) -> None:
         self.objective = Objective.GO_TO_ZONE
-        self.defend_area_coords = [0, 0, 0]
+        self.defend_area_coords = (0, 0, 0)
+        self.apache_timeout = 10
         return None
     
     def get_objective(self) -> Objective:
@@ -33,3 +33,12 @@ class Strategy:
             laser=9999
         ) 
         return default_costs
+
+    def set_defend_area_coords(self, coords: tuple[int, int, int]) -> None:
+        """Sets the coordinates of the defend area."""
+        self.defend_area_coords = coords
+        return None
+    
+    def get_defend_area_coords(self) -> tuple[int, int, int]:
+        """Returns the coordinates of the defend area."""
+        return self.defend_area_coords
