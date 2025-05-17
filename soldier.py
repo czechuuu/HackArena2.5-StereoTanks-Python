@@ -42,4 +42,7 @@ class Soldier():
         return Pass()
     
     def shoot_if_should(self, game_state: GameState, strategy: Strategy) -> ResponseAction:
-        pass
+        pass  # Both soldiers implement this method
+
+    def activate_radar(self, game_state: GameState, strategy: Strategy) -> ResponseAction | None:
+        return None  # Light soldier overrides this method; Default behaviour for heavy soldier

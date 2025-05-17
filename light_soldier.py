@@ -18,3 +18,11 @@ class LightSoldier(Soldier):
         else:
             return None
         
+    def activate_radar(self, game_state: GameState, strategy: Strategy) -> ResponseAction | None:
+        my_tank: Tank = self._find_my_tank(game_state)
+
+        if my_tank.turret.ticks_to_radar() is None:
+            return AbilityUse(Ability.USE_RADAR)
+        else:
+            return None
+        
