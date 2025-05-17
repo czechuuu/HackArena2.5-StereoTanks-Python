@@ -170,6 +170,11 @@ class Soldier:
             else:
                 strategy.to_next_cap -= 1
 
+            # With a low probability, just spin in place
+            if random.random() < 0.2:
+                return Rotation(None,
+                                RotationDirection.RIGHT)
+
             # Find all non-wall tiles (different from the current location) in the area
             non_wall_tiles_in_area: list[tuple[int, int]] = []
             for tile_x_in_area in range(area_x, area_x + area_length):
