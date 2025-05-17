@@ -9,6 +9,11 @@ class Strategy:
     defend_area_coords: dict[TankType: tuple[int, int, int]] = {}   # (x, y, radius)
     objective: Objective = None
     defend_area_coords: list[int, int, int] = None  # coordinates, length
+    attack_mode: bool = False
+    dip_mode: bool = False
+    bullets_left_in_attack_mode: int = 3
+    where_to_escape: tuple[int, int] = (0, 0)  # (x, y)
+    
 
     # CURRENTLY DEFAULT GO TO ZONE
     def __init__(self) -> None:
