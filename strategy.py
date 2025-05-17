@@ -6,7 +6,8 @@ class Objective(Enum):
     DEFEND_AREA = 1
 class Strategy:
     objective: Objective = None
-    defend_area_coords: list[int, int, int] = None  # coordinates, length
+    # x, y, side_length
+    defend_area_coords: list[int] = None  # coordinates, length
 
     # CURRENTLY DEFAULT GO TO ZONE
     def __init__(self) -> None:

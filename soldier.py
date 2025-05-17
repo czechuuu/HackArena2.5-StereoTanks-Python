@@ -1,6 +1,7 @@
 from typing import Tuple
 from hackathon_bot import *
 from strategy import Strategy
+import random 
 class Soldier:
     def _find_my_coordinates(self, game_state: GameState) -> tuple[int, int] | None:
         for y_coord, row in enumerate(game_state.map.tiles):
@@ -135,4 +136,51 @@ class Soldier:
         return False
     
     def defend_area(self, game_state: GameState, strategy: Strategy) -> ResponseAction:
-        pass
+        """Defends the area by first going to it and then randomly moving to a non-wall tile within it."""
+        maybe_coords = self._find_my_coordinates(game_state)
+        if maybe_coords is None:
+            print("Tank not found ?!?")
+            return Pass()
+        x: int = maybe_coords[0]
+        y: int = maybe_coords[1] 
+
+        # Get the coordinates of the area to defend
+        coords: list[int] = strategy.defend_area_coords
+        area_x, area_y, area_length = coords[0], coords[1], coords[2]
+        
+        grid_dim_y = len(game_state.map.tiles)
+        grid_dim_x = len(game_state.map.tiles[0])
+
+        # Check if the tank is already in the area
+        if area_x <= x < area_x + area_length and area_y <= y < area_y + area_length:
+            # Find all non-wall tiles (different from the current location) in the area
+            non_wall_tiles_in_area: list[tuple[int, int]] = []
+            for tile_x_in_area in range(area_x, area_x + area_length):
+                for tile_y_in_area in range(area_y, area_y + area_length):
+                    if 0 <= tile_x_in_area < grid_dim_x and 0 <= tile_y_in_area < grid_dim_y:
+                        tile = game_state.map.tiles[tile_y_in_area][tile_x_in_area]
+                        
+                        is_wall_tile = False
+                        if tile.entities:
+                            for entity in tile.entities:
+                                if isinstance(entity, Wall):
+                                    is_wall_tile = True
+                                    break
+                        # If it's not a wall, and we're not on it already add it
+                        if not is_wall_tile and (tile_x_in_area != x or tile_y_in_area != y):
+                            non_wall_tiles_in_area.append((tile_x_in_area, tile_y_in_area))
+            
+            # Choose one of these random non-wall tiles to move to
+            if non_wall_tiles_in_area:
+                chosen_tile_coords = random.choice(non_wall_tiles_in_area)
+                return GoTo(chosen_tile_coords[0], chosen_tile_coords[1],
+                               penalties=strategy.get_penalties())
+            else:
+                # Unlikely case but if we can't move anywhere then we'll spin in place
+                return Rotation(random.choice([RotationDirection.LEFT, RotationDirection.RIGHT]),
+                                random.choice([RotationDirection.LEFT, RotationDirection.RIGHT]))
+            
+        # If not in the area, navigate to the center of the area
+        center_x = area_x + area_length // 2
+        center_y = area_y + area_length // 2
+        return GoTo(center_x, center_y, penalties=strategy.get_penalties())
