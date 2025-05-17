@@ -96,14 +96,19 @@ class Soldier:
         
         # Define coordinate changes based on direction
         dx, dy = 0, 0
+        enemy_direction: list[Direction] = []
         if turret_direction == Direction.UP:
             dy = -1
+            enemy_direction = [Direction.LEFT, Direction.RIGHT]
         elif turret_direction == Direction.DOWN:
             dy = 1
+            enemy_direction = [Direction.LEFT, Direction.RIGHT]
         elif turret_direction == Direction.RIGHT:
             dx = 1
+            enemy_direction = [Direction.UP, Direction.DOWN]
         elif turret_direction == Direction.LEFT:
             dx = -1
+            enemy_direction = [Direction.UP, Direction.DOWN]
         
         # Check tiles in the direction of the turret
         current_x: int = my_x
@@ -130,7 +135,21 @@ class Soldier:
                     return False
                 if isinstance(entity, Tank) and entity.owner_id != game_state.my_id:
                     return True
-        
+            
+            tile_first: Tile = map.tiles[current_y + dx][current_x + dy]
+            tile_second: Tile = map.tiles[current_y - dx][current_x - dy]
+            
+            for entity in tile_first.entities:
+                if isinstance(entity, Tank) and teammate_tank is not None and entity.owner_id == teammate_tank.owner_id:
+                    return False
+                if isinstance(entity, Tank) and entity.owner_id != game_state.my_id and entity.direction in enemy_direction:
+                    return True
+            for entity in tile_second.entities:
+                if isinstance(entity, Tank) and teammate_tank is not None and entity.owner_id == teammate_tank.owner_id:
+                    return False
+                if isinstance(entity, Tank) and entity.owner_id != game_state.my_id and entity.direction in enemy_direction:
+                    return True
+            
         # If no enemy tank was found in the line of fire
         return False
     
