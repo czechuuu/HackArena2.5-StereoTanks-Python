@@ -14,6 +14,8 @@ class Strategy:
     bullets_left_in_attack_mode: int = 3
     where_to_escape: tuple[int, int] = (0, 0)  # (x, y)
     atacking_enemy: bool = False
+    CAP_FREQUENCY: int = 3
+    to_next_cap: int = 0
     
     def __init__(self) -> None:
         self.objective = Objective.GO_TO_ZONE
