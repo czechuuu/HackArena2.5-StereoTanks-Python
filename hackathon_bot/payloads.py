@@ -337,6 +337,7 @@ class GoToPayload(ResponseActionPayload):
 
     x: int
     y: int
+    turret_rotation: int | None
     costs: GoTo.Costs
     penalties: GoTo.Penalties
 

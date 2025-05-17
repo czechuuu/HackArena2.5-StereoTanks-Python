@@ -154,6 +154,19 @@ class CaptureZone(ResponseAction):
 class GoTo(ResponseAction):
     """Represents a pass response action.
 
+    Attributes
+    ----------
+    x: :class:`int`
+        The x coordinate to go to.
+    y: :class:`int`
+        The y coordinate to go to.
+    turret_rotation: :class:`RotationDirection` | `None`
+        The turret rotation direction. Defaults to None.
+    costs: :class:`Costs`
+        The costs of moving.
+    penalties: :class:`Penalties`
+        The penalties of moving.
+
     Example
     -------
 
@@ -163,7 +176,8 @@ class GoTo(ResponseAction):
         go_to = GoTo(5, 10)
 
 
-        # go to (x, y) coordinates with custom costs and penalties
+        # go to (x, y) coordinates with custom costs, penalties
+        # and turret rotation
 
         # prefer backward
         custom_costs = new Costs(forward=2, backward=1, rotate=2)
@@ -171,8 +185,16 @@ class GoTo(ResponseAction):
         custom_penalties = new Penalties(blindly=2, laser=5, mine=null)
         # add custom tiles to penalize (for example, to avoid cached mines)
         custom_penalties.per_tile.add(new PerTilePenalty(5, 10, 5.0))
+        # set turret rotation to left
+        turret_rotation = RotationDirection.LEFT
 
-        go_to = GoTo(5, 10, custom_costs, custom_penalties)
+        go_to = GoTo(5, 10, turret_rotation, custom_costs, custom_penalties)
+
+    Note
+    ----
+    The `turret_rotation` parameter is only relevant when the tank performs a rotation
+    as part of the movement. If the tank does not rotate (i.e., moves forward or backward
+    without changing its orientation), this value will be ignored.
     """
 
     @dataclass(slots=True)
@@ -240,13 +262,21 @@ class GoTo(ResponseAction):
 
     x: int
     y: int
+    turret_rotation: RotationDirection | None = None
     costs: Costs = field(default_factory=Costs)
     penalties: Penalties = field(default_factory=Penalties)
     packet_type: ClassVar[PacketType] = PacketType.GO_TO
 
     @final
     def to_payload(self, game_state_id: str) -> ResponseActionPayload:
-        return GoToPayload(game_state_id, self.x, self.y, self.costs, self.penalties)
+        return GoToPayload(
+            game_state_id,
+            self.x,
+            self.y,
+            self.turret_rotation,
+            self.costs,
+            self.penalties,
+        )
 
 
 @dataclass(slots=True, frozen=True)
