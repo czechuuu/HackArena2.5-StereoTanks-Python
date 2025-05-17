@@ -22,8 +22,8 @@ class Strategy:
         default_costs = GoTo.Penalties(
             blindly=1,
             tank=1,
-            bullet=float('inf'),
-            mine=float('inf'),
-            laser=float('inf')
+            bullet=99,
+            mine=999,
+            laser=9999
         ) 
         return default_costs
