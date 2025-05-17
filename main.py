@@ -54,11 +54,10 @@ class MyBot(StereoTanksBot):
         if attack_action is not None:
             return attack_action
         
-        # RADAR NOT UTILIZED
-        # # Check if you can activate the radar
-        # activate_radar: AbilityUse | None = self.soldiers[my_type].activate_radar(game_state, self.strategy)
-        # if activate_radar is not None:
-        #     return activate_radar
+        # Check if you can activate the radar
+        activate_radar: AbilityUse | None = self.soldier.activate_radar(game_state, self.strategy)
+        if activate_radar is not None:
+            return activate_radar
         
         friendly_soldiers_in_zone: tuple[TankType] = self._find_friendly_soldiers_in_zone(game_state)
         match len(friendly_soldiers_in_zone):

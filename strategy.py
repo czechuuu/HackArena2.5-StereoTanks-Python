@@ -20,7 +20,7 @@ class Strategy:
     def __init__(self) -> None:
         self.objective = Objective.GO_TO_ZONE
         self.defend_area_coords = (0, 0, 0)
-        self.apache_timeout = 15
+        self.apache_timeout = 20
         return None
     
     def get_objective(self) -> Objective:
