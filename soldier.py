@@ -137,7 +137,7 @@ class Soldier:
                     return True
             
             
-            if 0 <= current_y + dx <= 20 and 0 <= current_x + dy <= 20 and 0 <= current_y - dx <= 20 and 0 <= current_x - dy <= 20: 
+            if 0 <= current_y + dx < 20 and 0 <= current_x + dy < 20 and 0 <= current_y - dx < 20 and 0 <= current_x - dy < 20: 
                 tile_first: Tile = map.tiles[current_y + dx][current_x + dy]
                 tile_second: Tile = map.tiles[current_y - dx][current_x - dy]
                 
