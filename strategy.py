@@ -4,6 +4,7 @@ from enum import Enum
 class Objective(Enum):
     GO_TO_ZONE = 0
     DEFEND_AREA = 1
+
 class Strategy:
     objective: dict[TankType: Objective]
     apache_timeout: int = None  # time for apache to stay on target
@@ -12,11 +13,12 @@ class Strategy:
     dip_mode: bool = False
     bullets_left_in_attack_mode: int = 3
     where_to_escape: tuple[int, int] = (0, 0)  # (x, y)
+    atacking_enemy: bool = False
     
     def __init__(self) -> None:
         self.objective = Objective.GO_TO_ZONE
         self.defend_area_coords = (0, 0, 0)
-        self.apache_timeout = 10
+        self.apache_timeout = 15
         return None
     
     def get_objective(self) -> Objective:
@@ -31,7 +33,7 @@ class Strategy:
         # In the future, can change the penalties based on the objective etc.
         default_costs = GoTo.Penalties(
             blindly=1,
-            tank=1,
+            tank=999,
             bullet=99,
             mine=999,
             laser=9999
