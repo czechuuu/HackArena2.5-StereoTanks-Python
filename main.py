@@ -5,13 +5,13 @@ from heavy_soldier import HeavySoldier
 from strategy import Strategy, Objective
 
 class MyBot(StereoTanksBot):
-    soldiers: dict[TankType: Soldier] = {}
+    soldier: Soldier = None
     strategy: Strategy = None
+    first_move: bool = True
+    my_type: TankType = None
 
     def __init__(self) -> None:
         super().__init__()
-        self.soldiers[TankType.LIGHT] = LightSoldier()
-        self.soldiers[TankType.HEAVY] = HeavySoldier()
         self.strategy = Strategy()
     
     # NOT IMPLEMENTED
@@ -19,14 +19,25 @@ class MyBot(StereoTanksBot):
         return None
     
     def next_move(self, game_state: GameState) -> ResponseAction: 
+        if self.first_move:
+            self.first_move = False
+            found_type: TankType = self._find_my_tank(game_state).type
+            self.my_type = found_type
+            if found_type == TankType.LIGHT:
+                self.soldiers[found_type] = LightSoldier()
+            elif found_type == TankType.HEAVY:
+                self.soldiers[found_type] = HeavySoldier()
+            else:
+                raise ValueError(f"Unknown tank type: {found_type}")
+        
         # Find my tank on the map, if dead return Pass
         my_tank: Tank | None = self._find_my_tank(game_state)
         if my_tank is None:
+            self.strategy.set_objeective(Objective.GO_TO_ZONE)
             return Pass()
-        my_type: TankType = my_tank.type
         
         # Check if it can shoot an opponent
-        attack_action: AbilityUse | None = self.soldiers[my_type].shoot_if_should(game_state, self.strategy)
+        attack_action: AbilityUse | None = self.soldier.shoot_if_should(game_state, self.strategy)
         if attack_action is not None:
             return attack_action
         
@@ -37,11 +48,11 @@ class MyBot(StereoTanksBot):
         #     return activate_radar
         
         # Continue with the current strategy
-        match self.strategy.get_objective(my_type):
+        match self.strategy.get_objective():
             case Objective.GO_TO_ZONE:
-                return self.soldiers[my_type].go_to_zone(game_state, self.strategy)
+                return self.soldier.go_to_zone(game_state, self.strategy)
             case Objective.DEFEND_AREA:
-                return self.soldiers[my_type].defend_area(game_state, self.strategy)
+                return self.soldier.defend_area(game_state, self.strategy)
             case default:
                 return Pass()
     

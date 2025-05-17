@@ -85,7 +85,6 @@ class Soldier:
     def activate_radar(self, game_state: GameState, strategy: Strategy) -> ResponseAction | None:
         return None  # Light soldier overrides this method; Default behaviour for heavy soldier
     
-
     def should_shoot_opponent(self, game_state: GameState, strategy: Strategy) -> bool:
         map: Map = game_state.map
         my_tank: Tank = self._find_my_tank(game_state)
@@ -134,3 +133,6 @@ class Soldier:
         
         # If no enemy tank was found in the line of fire
         return False
+    
+    def defend_area(self, game_state: GameState, strategy: Strategy) -> ResponseAction:
+        pass
