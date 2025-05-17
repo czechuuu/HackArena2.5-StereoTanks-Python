@@ -1,41 +1,31 @@
 from hackathon_bot import *
+from soldier import Soldier
 from light_soldier import LightSoldier
 from heavy_soldier import HeavySoldier
+from strategy import Strategy, Objective
 
 class MyBot(StereoTanksBot):
-    light_soldier: LightSoldier
-    heavy_soldier: HeavySoldier
-
+    soldiers: dict[TankType: Soldier]
+    strategy: Strategy
 
     def __init__(self) -> None:
         super().__init__()
-        self.light_soldier = LightSoldier()
-        self.heavy_soldier = HeavySoldier()
+        self.soldiers[TankType.LIGHT] = LightSoldier()
+        self.soldiers[TankType.HEAVY] = HeavySoldier()
+        self.strategy = Strategy()
     
+    # NOT IMPLEMENTED
     def on_lobby_data_received(self, lobby_data: LobbyData) -> None: 
-        self.light_soldier.on_lobby_data_received(lobby_data)
-        self.heavy_soldier.on_lobby_data_received(lobby_data)
-        return None
-    
-    def _find_my_tank(self, game_state: GameState) -> Tank | None:  # from example.py
-        """Finds the agent in the game state."""
-        for row in game_state.map.tiles:
-            for tile in row:
-                if tile.entities:
-                    entity = tile.entities[0]
-                    if isinstance(entity, Tank) and entity.owner_id == game_state.my_id:
-                        return entity
         return None
     
     def next_move(self, game_state: GameState) -> ResponseAction: 
-        my_id = game_state.my_id
         my_type = self._find_my_tank(game_state).type
-        if my_type == TankType.LIGHT:
-            return self.light_soldier.next_move(game_state)
-        elif my_type == TankType.HEAVY:
-            return self.heavy_soldier.next_move(game_state)
-        else:
-            raise ValueError(f"Unknown tank type: {my_type}")
+        
+        match self.strategy.get_objective():
+            case Objective.GO_TO_ZONE:
+                return self.soldiers[my_type].go_to_zone(game_state, self.strategy)
+            case default:
+                return Pass()
     
     def on_game_ended(self, game_result: GameResult) -> None: 
         self.light_soldier.on_game_ended(game_result)
@@ -48,7 +38,14 @@ class MyBot(StereoTanksBot):
     ) -> None: 
         pass
 
-
+    def _find_my_tank(self, game_state: GameState) -> Tank | None:  # from example.py
+        for row in game_state.map.tiles:
+            for tile in row:
+                if tile.entities:
+                    entity = tile.entities[0]
+                    if isinstance(entity, Tank) and entity.owner_id == game_state.my_id:
+                        return entity
+        return None
 
 if __name__ == "__main__":
     bot = MyBot()
