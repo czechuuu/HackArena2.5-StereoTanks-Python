@@ -8,6 +8,8 @@ class Strategy:
     objective: dict[TankType: Objective]
     defend_area_coords: dict[TankType: tuple[int, int, int]] = {}   # (x, y, radius)
     objective: Objective = None
+    defend_area_coords: tuple[int, int, int] = None  # coordinates, length
+    apache_timeout: int = None  # time for apache to stay on target
     defend_area_coords: list[int, int, int] = None  # coordinates, length
     attack_mode: bool = False
     dip_mode: bool = False
@@ -15,10 +17,10 @@ class Strategy:
     where_to_escape: tuple[int, int] = (0, 0)  # (x, y)
     
 
-    # CURRENTLY DEFAULT GO TO ZONE
     def __init__(self) -> None:
         self.objective = Objective.GO_TO_ZONE
-        self.defend_area_coords = [0, 0, 0]
+        self.defend_area_coords = (0, 0, 0)
+        self.apache_timeout = 10
         return None
     
     def get_objective(self) -> Objective:
@@ -39,3 +41,12 @@ class Strategy:
             laser=9999
         ) 
         return default_costs
+
+    def set_defend_area_coords(self, coords: tuple[int, int, int]) -> None:
+        """Sets the coordinates of the defend area."""
+        self.defend_area_coords = coords
+        return None
+    
+    def get_defend_area_coords(self) -> tuple[int, int, int]:
+        """Returns the coordinates of the defend area."""
+        return self.defend_area_coords
