@@ -126,13 +126,12 @@ class Soldier():
             for entity in tile.entities:
                 if isinstance(entity, Wall) and entity.type == WallType.SOLID:
                     return False
-                if isinstance(entity, Tank) and entity.owner_id == teammate_tank.owner_id:
-                    return False
             
             # Check if there's an enemy tank in this tile
             for entity in tile.entities:
+                if isinstance(entity, Tank) and entity.owner_id == teammate_tank.owner_id:
+                    return False
                 if isinstance(entity, Tank) and entity.owner_id != game_state.my_id:
-                    
                     return True
         
         # If no enemy tank was found in the line of fire
