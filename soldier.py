@@ -40,3 +40,6 @@ class Soldier():
             return GoTo(nearest_unoccupied_tile_coords[0], nearest_unoccupied_tile_coords[1], costs=action_costs)
 
         return Pass()
+    
+    def shoot_if_should(self, game_state: GameState, strategy: Strategy) -> ResponseAction:
+        pass

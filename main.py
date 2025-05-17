@@ -19,8 +19,12 @@ class MyBot(StereoTanksBot):
         return None
     
     def next_move(self, game_state: GameState) -> ResponseAction: 
-        my_type = self._find_my_tank(game_state).type
+        my_type: TankType = self._find_my_tank(game_state).type
         
+        attack_action: AbilityUse | None = self.soldiers[my_type].shoot_if_should(game_state, self.strategy)
+        if attack_action is not None:
+            return attack_action
+
         match self.strategy.get_objective():
             case Objective.GO_TO_ZONE:
                 return self.soldiers[my_type].go_to_zone(game_state, self.strategy)
