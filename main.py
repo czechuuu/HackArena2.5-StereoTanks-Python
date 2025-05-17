@@ -27,9 +27,8 @@ class MyBot(StereoTanksBot):
             case default:
                 return Pass()
     
+    # NOT IMPLEMENTED
     def on_game_ended(self, game_result: GameResult) -> None: 
-        self.light_soldier.on_game_ended(game_result)
-        self.heavy_soldier.on_game_ended(game_result)
         return None
     
     # NOT IMPLEMENTED - DON'T CARE (?)
