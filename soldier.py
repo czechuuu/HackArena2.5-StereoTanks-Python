@@ -172,8 +172,9 @@ class Soldier:
             # Choose one of these random non-wall tiles to move to
             if non_wall_tiles_in_area:
                 chosen_tile_coords = random.choice(non_wall_tiles_in_area)
+                rotation_direction = random.choice([RotationDirection.LEFT, RotationDirection.RIGHT])
                 return GoTo(chosen_tile_coords[0], chosen_tile_coords[1],
-                               penalties=strategy.get_penalties())
+                               penalties=strategy.get_penalties(), turret_rotation=rotation_direction)
             else:
                 # Unlikely case but if we can't move anywhere then we'll spin in place
                 return Rotation(random.choice([RotationDirection.LEFT, RotationDirection.RIGHT]),
