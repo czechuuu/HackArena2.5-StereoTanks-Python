@@ -56,3 +56,11 @@ class Soldier():
 
         # If all tiles are occupied, just go to the corner of the zone
         return GoTo(zone.x, zone.y, penalties=strategy.get_penalties())
+
+        return Pass()
+    
+    def shoot_if_should(self, game_state: GameState, strategy: Strategy) -> ResponseAction:
+        pass  # Both soldiers implement this method
+
+    def activate_radar(self, game_state: GameState, strategy: Strategy) -> ResponseAction | None:
+        return None  # Light soldier overrides this method; Default behaviour for heavy soldier

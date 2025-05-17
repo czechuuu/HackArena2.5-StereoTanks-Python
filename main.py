@@ -19,17 +19,28 @@ class MyBot(StereoTanksBot):
         return None
     
     def next_move(self, game_state: GameState) -> ResponseAction: 
-        my_type = self._find_my_tank(game_state).type
+        # Find my tank on the map
+        my_type: TankType = self._find_my_tank(game_state).type
         
+        # Check if it can shoot an opponent
+        attack_action: AbilityUse | None = self.soldiers[my_type].shoot_if_should(game_state, self.strategy)
+        if attack_action is not None:
+            return attack_action
+        
+        # Check if you can activate the radar
+        activate_radar: AbilityUse | None = self.soldiers[my_type].activate_radar(game_state, self.strategy)
+        if activate_radar is not None:
+            return activate_radar
+        
+        # Continue with the current strategy
         match self.strategy.get_objective():
             case Objective.GO_TO_ZONE:
                 return self.soldiers[my_type].go_to_zone(game_state, self.strategy)
             case default:
                 return Pass()
     
+    # NOT IMPLEMENTED
     def on_game_ended(self, game_result: GameResult) -> None: 
-        self.light_soldier.on_game_ended(game_result)
-        self.heavy_soldier.on_game_ended(game_result)
         return None
     
     # NOT IMPLEMENTED - DON'T CARE (?)
