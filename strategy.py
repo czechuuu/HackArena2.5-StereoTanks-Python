@@ -14,7 +14,7 @@ class Strategy:
         self.defend_area_coords = [0, 0, 0]
         return None
     
-    def get_objective(self, type: TankType) -> Objective:
+    def get_objective(self) -> Objective:
         return self.objective
     
     def set_objective(self, new_objective: Objective) -> None:

@@ -24,9 +24,9 @@ class MyBot(StereoTanksBot):
             found_type: TankType = self._find_my_tank(game_state).type
             self.my_type = found_type
             if found_type == TankType.LIGHT:
-                self.soldiers[found_type] = LightSoldier()
+                self.soldier = LightSoldier()
             elif found_type == TankType.HEAVY:
-                self.soldiers[found_type] = HeavySoldier()
+                self.soldier = HeavySoldier()
             else:
                 raise ValueError(f"Unknown tank type: {found_type}")
         
