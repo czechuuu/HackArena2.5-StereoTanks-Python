@@ -82,10 +82,20 @@ class MyBot(StereoTanksBot):
         if found_enemy is not None and len(friendly_soldiers_in_zone) == 2 and self.my_type == TankType.LIGHT:
             self.strategy.set_objective(Objective.DEFEND_AREA)
             self.strategy.set_defend_area_coords(self._calculate_enemy_square(game_state, found_enemy))
+            self.strategy.atacking_enemy = True
             
         if found_enemy is not None and len(friendly_soldiers_in_zone) == 1 and not self._in_zone(game_state):
             self.strategy.set_objective(Objective.DEFEND_AREA)
             self.strategy.set_defend_area_coords(self._calculate_enemy_square(game_state, found_enemy))
+            self.strategy.atacking_enemy = True
+
+        if self.strategy.atacking_enemy:
+            self.strategy.apache_timeout -= 1
+            if self.strategy.apache_timeout <= 0:
+                self.strategy.atacking_enemy = False
+                self.strategy.set_objective(Objective.DEFEND_AREA)
+                self.strategy.set_defend_area_coords(self._calculate_zone_square(game_state))
+                self.strategy.apache_timeout = 15
     
         # Continue with the current strategy
         match self.strategy.get_objective():
