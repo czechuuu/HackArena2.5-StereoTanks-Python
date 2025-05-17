@@ -5,8 +5,8 @@ from heavy_soldier import HeavySoldier
 from strategy import Strategy, Objective
 
 class MyBot(StereoTanksBot):
-    soldiers: dict[TankType: Soldier]
-    strategy: Strategy
+    soldiers: dict[TankType: Soldier] = {}
+    strategy: Strategy = None
 
     def __init__(self) -> None:
         super().__init__()
@@ -19,23 +19,29 @@ class MyBot(StereoTanksBot):
         return None
     
     def next_move(self, game_state: GameState) -> ResponseAction: 
-        # Find my tank on the map
-        my_type: TankType = self._find_my_tank(game_state).type
+        # Find my tank on the map, if dead return Pass
+        my_tank: Tank | None = self._find_my_tank(game_state)
+        if my_tank is None:
+            return Pass()
+        my_type: TankType = my_tank.type
         
         # Check if it can shoot an opponent
         attack_action: AbilityUse | None = self.soldiers[my_type].shoot_if_should(game_state, self.strategy)
         if attack_action is not None:
             return attack_action
         
-        # Check if you can activate the radar
-        activate_radar: AbilityUse | None = self.soldiers[my_type].activate_radar(game_state, self.strategy)
-        if activate_radar is not None:
-            return activate_radar
+        # RADAR NOT UTILIZED
+        # # Check if you can activate the radar
+        # activate_radar: AbilityUse | None = self.soldiers[my_type].activate_radar(game_state, self.strategy)
+        # if activate_radar is not None:
+        #     return activate_radar
         
         # Continue with the current strategy
-        match self.strategy.get_objective():
+        match self.strategy.get_objective(my_type):
             case Objective.GO_TO_ZONE:
                 return self.soldiers[my_type].go_to_zone(game_state, self.strategy)
+            case Objective.DEFEND_AREA:
+                return self.soldiers[my_type].defend_area(game_state, self.strategy)
             case default:
                 return Pass()
     
@@ -43,11 +49,11 @@ class MyBot(StereoTanksBot):
     def on_game_ended(self, game_result: GameResult) -> None: 
         return None
     
-    # NOT IMPLEMENTED - DON'T CARE (?)
     def on_warning_received(
         self, warning: WarningType, message: str | None
     ) -> None: 
-        pass
+        print(f"Warning received: {warning} - {message}")
+        return None
 
     def _find_my_tank(self, game_state: GameState) -> Tank | None:  # from example.py
         for row in game_state.map.tiles:

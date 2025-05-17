@@ -9,11 +9,11 @@ class LightSoldier(Soldier):
         
         my_tank: Tank = self._find_my_tank(game_state)
 
-        if my_tank.turret.ticks_to_double_bullet() is None:
+        if my_tank.turret.ticks_to_double_bullet is None:
             return AbilityUse(Ability.FIRE_DOUBLE_BULLET)
-        elif my_tank.turret.ticks_to_stun_bullet() is None:
+        elif my_tank.turret.ticks_to_stun_bullet is None:
             return AbilityUse(Ability.FIRE_STUN_BULLET)
-        elif my_tank.turret.bullet_count() > 0:
+        elif my_tank.turret.bullet_count > 0:
             return AbilityUse(Ability.FIRE_BULLET)
         else:
             return None
@@ -21,7 +21,7 @@ class LightSoldier(Soldier):
     def activate_radar(self, game_state: GameState, strategy: Strategy) -> ResponseAction | None:
         my_tank: Tank = self._find_my_tank(game_state)
 
-        if my_tank.turret.ticks_to_radar() is None:
+        if my_tank.ticks_to_radar is None:
             return AbilityUse(Ability.USE_RADAR)
         else:
             return None
