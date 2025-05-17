@@ -13,7 +13,6 @@ class Strategy:
     bullets_left_in_attack_mode: int = 3
     where_to_escape: tuple[int, int] = (0, 0)  # (x, y)
     
-
     def __init__(self) -> None:
         self.objective = Objective.GO_TO_ZONE
         self.defend_area_coords = (0, 0, 0)
