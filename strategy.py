@@ -6,9 +6,6 @@ class Objective(Enum):
     DEFEND_AREA = 1
 class Strategy:
     objective: dict[TankType: Objective]
-    defend_area_coords: dict[TankType: tuple[int, int, int]] = {}   # (x, y, radius)
-    objective: Objective = None
-    defend_area_coords: tuple[int, int, int] = None  # coordinates, length
     apache_timeout: int = None  # time for apache to stay on target
     defend_area_coords: list[int, int, int] = None  # coordinates, length
     attack_mode: bool = False
