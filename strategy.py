@@ -7,17 +7,21 @@ class Objective(Enum):
 class Strategy:
     objective: dict[TankType: Objective]
     defend_area_coords: dict[TankType: tuple[int, int, int]] = {}   # (x, y, radius)
+    objective: Objective = None
+    defend_area_coords: list[int, int, int] = None  # coordinates, length
 
     # CURRENTLY DEFAULT GO TO ZONE
     def __init__(self) -> None:
-        self.objective[TankType.LIGHT] = Objective.GO_TO_ZONE
-        self.objective[TankType.HEAVY] = Objective.GO_TO_ZONE
-        self.defend_area_coords[TankType.LIGHT] = (0, 0, 0)
-        self.defend_area_coords[TankType.HEAVY] = (0, 0, 0)
+        self.objective = Objective.GO_TO_ZONE
+        self.defend_area_coords = [0, 0, 0]
         return None
     
-    def get_objective(self, type: TankType) -> Objective:
-        return self.objective[type]
+    def get_objective(self) -> Objective:
+        return self.objective
+    
+    def set_objective(self, new_objective: Objective) -> None:
+        self.objective = new_objective
+        return None
     
     def get_penalties(self) -> GoTo.Penalties:
         """Returns the penalties for the GoTo action."""
