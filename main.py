@@ -79,7 +79,7 @@ class MyBot(StereoTanksBot):
 
         # If I am not in zone and see an enemy go to him
         found_enemy: tuple[int, int] | None = self._find_enemy(game_state)
-        if found_enemy is not None and len(friendly_soldiers_in_zone) == 2 and self.my_type == TankType.HEAVY:
+        if found_enemy is not None and len(friendly_soldiers_in_zone) == 2 and self.my_type == TankType.LIGHT:
             self.strategy.set_objective(Objective.DEFEND_AREA)
             self.strategy.set_defend_area_coords(self._calculate_enemy_square(game_state, found_enemy))
             
