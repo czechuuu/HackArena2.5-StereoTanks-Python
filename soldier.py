@@ -136,19 +136,21 @@ class Soldier:
                 if isinstance(entity, Tank) and entity.owner_id != game_state.my_id:
                     return True
             
-            tile_first: Tile = map.tiles[current_y + dx][current_x + dy]
-            tile_second: Tile = map.tiles[current_y - dx][current_x - dy]
             
-            for entity in tile_first.entities:
-                if isinstance(entity, Tank) and teammate_tank is not None and entity.owner_id == teammate_tank.owner_id:
-                    return False
-                if isinstance(entity, Tank) and entity.owner_id != game_state.my_id and entity.direction in enemy_direction:
-                    return True
-            for entity in tile_second.entities:
-                if isinstance(entity, Tank) and teammate_tank is not None and entity.owner_id == teammate_tank.owner_id:
-                    return False
-                if isinstance(entity, Tank) and entity.owner_id != game_state.my_id and entity.direction in enemy_direction:
-                    return True
+            if 0 <= current_y + dx <= 20 and 0 <= current_x + dy <= 20 and 0 <= current_y - dx <= 20 and 0 <= current_x - dy <= 20: 
+                tile_first: Tile = map.tiles[current_y + dx][current_x + dy]
+                tile_second: Tile = map.tiles[current_y - dx][current_x - dy]
+                
+                for entity in tile_first.entities:
+                    if isinstance(entity, Tank) and teammate_tank is not None and entity.owner_id == teammate_tank.owner_id:
+                        return False
+                    if isinstance(entity, Tank) and entity.owner_id != game_state.my_id and entity.direction in enemy_direction:
+                        return True
+                for entity in tile_second.entities:
+                    if isinstance(entity, Tank) and teammate_tank is not None and entity.owner_id == teammate_tank.owner_id:
+                        return False
+                    if isinstance(entity, Tank) and entity.owner_id != game_state.my_id and entity.direction in enemy_direction:
+                        return True
             
         # If no enemy tank was found in the line of fire
         return False
