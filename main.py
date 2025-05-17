@@ -8,6 +8,7 @@ class MyBot(StereoTanksBot):
     soldier: Soldier = None
     strategy: Strategy = None
     first_move: bool = True
+    teammate_found: bool = False
     my_type: TankType = None
     my_teammate_id: str = None
 
@@ -31,20 +32,21 @@ class MyBot(StereoTanksBot):
             else:
                 raise ValueError(f"Unknown tank type: {found_type}")
             
+        if not self.teammate_found:
             team = next(
             t
             for t in game_state.teams
             if any(map(lambda x: x.id == game_state.my_id, t.players))
             )
             teammate = next((p for p in team.players if p.id != game_state.my_id), None)
-            if teammate is None:
-                raise ValueError(f"Teammate not found")
-            self.my_teammate_id = teammate.id
-
+            if teammate is not None:
+                self.my_teammate_id = teammate.id
+                self.teammate_found = True
+            
         # Find my tank on the map, if dead return Pass
         my_tank: Tank | None = self._find_my_tank(game_state)
         if my_tank is None:
-            self.strategy.set_objeective(Objective.GO_TO_ZONE)
+            self.strategy.set_objective(Objective.GO_TO_ZONE)
             return Pass()
         
         # Check if it can shoot an opponent
@@ -77,7 +79,12 @@ class MyBot(StereoTanksBot):
 
         # If I am not in zone and see an enemy go to him
         found_enemy: tuple[int, int] | None = self._find_enemy(game_state)
-        if found_enemy is not None and not self._in_zone(game_state):
+        if found_enemy is not None and len(friendly_soldiers_in_zone) == 2 and self.my_type == TankType.HEAVY:
+            self.strategy.set_objective(Objective.DEFEND_AREA)
+            self.strategy.set_defend_area_coords(self._calculate_enemy_square(game_state, found_enemy))
+            
+        if found_enemy is not None and len(friendly_soldiers_in_zone) == 1 and not self._in_zone(game_state):
+            self.strategy.set_objective(Objective.DEFEND_AREA)
             self.strategy.set_defend_area_coords(self._calculate_enemy_square(game_state, found_enemy))
     
         # Continue with the current strategy
@@ -110,11 +117,11 @@ class MyBot(StereoTanksBot):
     
     # FIRST FOUND ENEMY FROM TOP LEFT - MAYBE WE NEED CLOSEST TO ZONE?
     def _find_enemy(self, game_state: GameState) -> tuple[int, int] | None:
-        for row in game_state.map.tiles:
-            for tile in row:
-                for entity in tile.entities:
-                    if isinstance(entity, Tank) and entity.owner_id != game_state.my_id and entity.owner_id != self.my_teammate_id:
-                        return (tile.x, tile.y)
+        for y in range(20):
+            for x in range(20):
+                for entity in game_state.map.tiles[y][x].entities:
+                    if isinstance(entity, Tank) and entity.owner_id != game_state.my_id and self.teammate_found and entity.owner_id != self.my_teammate_id:
+                        return (x, y)
         return None
     
     def _find_friendly_soldiers_in_zone(self, game_state: GameState) -> tuple[TankType]:
@@ -133,7 +140,7 @@ class MyBot(StereoTanksBot):
                 tile = game_state.map.tiles[y][x]
                 if tile.entities:
                     entity = tile.entities[0]
-                    if isinstance(entity, Tank) and (entity.owner_id == game_state.my_id or entity.owner_id == self.my_teammate_id):
+                    if isinstance(entity, Tank) and (entity.owner_id == game_state.my_id or (self.teammate_found and entity.owner_id == self.my_teammate_id)):
                         friendly_soldiers.append(entity.type)
 
         return tuple(friendly_soldiers)
@@ -159,9 +166,9 @@ class MyBot(StereoTanksBot):
         if zone_height != zone_width:
             raise ValueError(f"Zone is not square: {zone_height} != {zone_width}")
         
-        x_square: int = max(x_zone - 3, 0)
-        y_square: int = max(y_zone - 3, 0)
-        square_length: int = zone_height + 3
+        x_square: int = max(x_zone - 4, 0)
+        y_square: int = max(y_zone - 4, 0)
+        square_length: int = zone_height + 4
         if x_square + square_length >= 20 or y_square + square_length >= 20:  # OK?
             square_length = min(20 - x_square - 1, 20 - y_square - 1)
         return tuple([x_square, y_square, square_length])
