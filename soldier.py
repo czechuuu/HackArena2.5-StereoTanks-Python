@@ -134,6 +134,16 @@ class Soldier:
         # If no enemy tank was found in the line of fire
         return False
     
+    def _in_zone(self, game_state: GameState) -> bool:
+        my_coords: tuple[int, int] | None = self._find_my_coordinates(game_state)
+        if my_coords is None:
+            return False
+        if (my_coords[0] >= game_state.map.zones[0].x
+             and my_coords[0] < game_state.map.zones[0].x + game_state.map.zones[0].width
+             and my_coords[1] >= game_state.map.zones[0].y
+             and my_coords[1] < game_state.map.zones[0].y + game_state.map.zones[0].height):
+            return True
+    
     def defend_area(self, game_state: GameState, strategy: Strategy) -> ResponseAction:
         """Defends the area by first going to it and then randomly moving to a non-wall tile within it."""
         maybe_coords = self._find_my_coordinates(game_state)
@@ -152,6 +162,14 @@ class Soldier:
 
         # Check if the tank is already in the area
         if area_x <= x < area_x + area_length and area_y <= y < area_y + area_length:
+            # Try to cap every now and then
+            if strategy.to_next_cap == 0:
+                if self._in_zone(game_state):
+                    strategy.to_next_cap = strategy.CAP_FREQUENCY
+                    return CaptureZone()
+            else:
+                strategy.to_next_cap -= 1
+
             # Find all non-wall tiles (different from the current location) in the area
             non_wall_tiles_in_area: list[tuple[int, int]] = []
             for tile_x_in_area in range(area_x, area_x + area_length):
